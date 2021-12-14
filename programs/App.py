@@ -1,35 +1,63 @@
 
 from budget import Budget
 
-food_budget = Budget('Food', 400, 50)
-print(food_budget)
+# List that will store the budgets created
+listBudgets = []
 
-clothing_budget = Budget('Clothes', 200, 100)
-print(clothing_budget)
+# append an initial budget if you want to try the transfer method with the first budget you create
+listBudgets.append(Budget('temp',400,50))
 
-entertainment_budget = Budget('Entertainment', 100, 20)
-print(entertainment_budget)
+condition = 'y'
 
-clothing_budget.addToBudget(30)
+while condition == 'y':
+    print('Type in the name of your new budget(i.e.: food, entertainment,... ):')
+    budgetType = input()
+    print('What\'s your initial balance?')
+    budgetBalance = int(input())
+    print('Set your maximum withdraw allowance:')
+    maxWithdraw = int(input())
 
-clothing_budget.addToBudget(30)
+    newBudg = Budget(budgetType,budgetBalance,maxWithdraw)
+    listBudgets.append(newBudg)
 
-clothing_budget.withdrawFromBudget(20)
+    print('Do you want to add more money to your balance? y/n')
+    answer=input()
+    if answer == 'y':
+        print('How much do you want do add?')
+        amount=int(input())
+        newBudg.addToBudget(amount)
 
-clothing_budget.withdrawFromBudget(150)
+    print('Do you want to withdraw money? y/n')
+    answer=input()
+    if answer == 'y':
+        print(f'How much do you want do withdraw? \nMax allowance: {newBudg.max_allowance_withdraw}\nCurrent Balance: {newBudg.balance}')
+        amount=int(input())
+        if amount > newBudg.max_allowance_withdraw or newBudg.balance < amount:
+            print('Not allowed')
+        else:
+            newBudg.withdrawFromBudget(amount)
 
-clothing_budget.transferToOther(20, food_budget)
+    print('Would you like to transfer money to another budget? y/n')
+    answer=input()
+    if answer == 'y':
+        print('Type in the budget to feed:')
+        budgetToFeed = input()
+        # check if the file and therefore the budget to feed exist. If yes transfer money
+        found = False
+        for budget in listBudgets:
+            if budget.type_ == budgetToFeed:
+                print(f'How much do you want to transfer? \nMax allowance: {newBudg.max_allowance_withdraw}\nCurrent Balance: {newBudg.balance}')
+                amount=int(input())
+                if amount > budget.max_allowance_withdraw or budget.balance < amount:
+                    print('Not allowed')
+                else:
+                    newBudg.transferToOther(amount, budget)
+                found = True
+        if found:
+            found = False
+        else:
+            print('Sorry, budget not found. Money cannot be transferred.')
 
-food_budget.transferToOther(10, entertainment_budget)
-
-food_budget.withdrawFromBudget(50)
-
-food_budget.addToBudget(500)
-
-entertainment_budget.transferToOther(20, clothing_budget)
-
-entertainment_budget.withdrawFromBudget(70)
-
-entertainment_budget.withdrawFromBudget(25)
-
-entertainment_budget.addToBudget(35)
+    print('Would you like to create another budget? y/n')
+    condition = input()
+    

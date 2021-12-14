@@ -7,6 +7,7 @@ class Budget():
         self.type_ = type_
         self.balance = balance
         self.max_allowance_withdraw = max_allowance_withdraw
+        # create a new file when a Budget object is instantiated
         self.file_ = self.createInfoFile()
 
     def __repr__(self):
@@ -20,23 +21,14 @@ class Budget():
 
     # withdraw from balance
     def withdrawFromBudget(self, amount, description = 'Withdrawn: '):
-        if self.balance < amount:
-            return 'Oooops! Seems like you do not have enough money to withdraw. Please add some to your budget'
-        elif amount > self.max_allowance_withdraw:
-            return f'Sorry, you are not allow to withdraw this amount of money. Your limit is {self.max_allowance_withdraw}'
-        else:
-            self.balance -= amount
-            self.modifyInfoFile(description, amount)
-            return amount 
+        self.balance -= amount
+        self.modifyInfoFile(description, amount)
+        return amount 
 
     # transfer money to another budget
-    def transferToOther(self, amount, budget_to_feed, description = 'Transfer from: '):
-        amount_to_transfer = self.withdrawFromBudget(amount)
-        if type(amount_to_transfer) == int:
-            return budget_to_feed.addToBudget(amount_to_transfer)
-        else:
-            return amount_to_transfer
-
+    def transferToOther(self, amount, budget_to_feed):
+        return budget_to_feed.addToBudget(self.withdrawFromBudget(amount))
+       
     # Create a file in which I can store the type of budget and its balance
     def createInfoFile(self):
         file1 = open(f'{self.type_}_budget.txt', 'w')
@@ -45,7 +37,7 @@ class Budget():
         file1.close()
 
     # modify file when balance changes
-    def modifyInfoFile(self, description, amount):
+    def modifyInfoFile(self, description, amount):      #description refers to the operation applied to the balance
         file1 = open(f'{self.type_}_budget.txt', 'r')
         lines = file1.readlines()
         file1.close()
